@@ -1,22 +1,27 @@
 import "./App.css";
-import NavBar from "./NavBar";
-import MainComponent from "./MainComponent";
-import { useEffect, useState } from "react";
-import Search from "./Search";
-import NumResults from "./NumResults";
-import Logo from "./Logo";
 import Box from "./Box";
+import Logo from "./Logo";
+import NavBar from "./NavBar";
+import Loader from "./Loader";
+import Search from "./Search";
 import MovieList from "./MovieList";
+import NumResults from "./NumResults";
+import MovieDetails from "./MovieDetails";
+import MainComponent from "./MainComponent";
+import { use, useEffect, useState } from "react";
 import WatchedSummary from "./WatchedSummary";
 import WatchedMoviesList from "./WatchedMoviesList";
-import MovieDetails from "./MovieDetails";
-import Loader from "./Loader";
 
 const API_KEY = "b530df92";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
+
+  const [watched, setWatched] = useState(function () {
+    const storedWatchedMovies = JSON.parse(localStorage.getItem("watched"));
+    return storedWatchedMovies ?? [];
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -37,6 +42,13 @@ export default function App() {
   function onDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
+
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched],
+  );
 
   useEffect(
     function () {
